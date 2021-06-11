@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+  notejam:
+    image: notejam
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./db/:/usr/local/db/
+    ports:
+      - 5000:5000
+    depends_on: 
+      - sqlite3
+      
+  nginx:
+    image: nginx
+    build:
+      context: ./Nginx
+      dockerfile: ./Dockerfile
+    ports:
+      - 80:80
+    depends_on: 
+      - notejam
+      - sqlite3
+
+  sqlite3:
+    image: sqlite3
+    build:
+      context: ./db
+      dockerfile: ./Dockerfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - /home/db/:/db sqlite3
